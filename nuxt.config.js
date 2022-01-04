@@ -13,20 +13,26 @@ export default {
         ],
         link: [
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-            { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i' }
+            { rel: 'stylesheet', href: 'https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css' },
+            { rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.7.2/css/all.css' },
+            { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' }
         ],
         script: [
-            { src: "vendor/jquery/jquery.min.js" },
-            { src: "vendor/bootstrap/js/bootstrap.bundle.min.js" },
-            { src: "vendor/jquery-easing/jquery.easing.min.js" },
-            { src: "js/sb-admin-2.min.js" }
+            { src: "//cdn.jsdelivr.net/npm/sweetalert2@11" },
+            { src: "https://code.jquery.com/jquery-3.3.1.min.js" },
+            { src: "/js/jquery.min.js" },
+            { src: "/js/bootstrap.bundle.min.js" },
+            { src: "/js/bootadmin.min.js" },
+            { src: "https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js" },
+            { src: "https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js" }
         ],
     },
-
+    loading: { color: 'red' },
     // Global CSS: https://go.nuxtjs.dev/config-css
     css: [
-        '@/assets/vendor/fontawesome-free/css/all.min.css',
-        '@/assets/css/sb-admin-2.min.css'
+        '@/assets/css/bootstrap.min.css',
+        '@/assets/css/fontawesome-all.min.css',
+        '@/assets/css/bootadmin.min.css',
     ],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -42,6 +48,7 @@ export default {
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
+        'vue-sweetalert2/nuxt',
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios

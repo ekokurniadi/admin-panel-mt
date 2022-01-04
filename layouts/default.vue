@@ -1,27 +1,35 @@
 <template>
-  <div id="wrapper">
-    <app-sidebar></app-sidebar>
-    <div id="content-wrapper" class="d-flex flex-column">
-      <div id="content">
-        <app-navigation></app-navigation>
-        <div class="container-fluid">
-          <Nuxt/>
-        </div>
-      </div>
-      <app-footer></app-footer>
-    </div>
-  </div>
+	<section>
+		<app-header></app-header>
+			<div class="d-flex">
+				<app-sidebar></app-sidebar>
+					<div class="content p-4">
+						<transition name="home">
+						<Nuxt/>
+						</transition>
+					</div>
+			</div>
+		<app-footer></app-footer>
+	</section>
 </template>
-
+<style>
+  .home-enter-active, .home-leave-active { transition: opacity .5s; }
+  .home-enter, .home-leave-active { opacity: 0; }
+</style>
 <script>
-import Navigation from '@/components/Layout/Navigation.vue'
-import SideBar from '@/components/Layout/SideBar.vue'
-import Footer from '@/components/Layout/Footer.vue'
+import Header from '@/components/partial/Header.vue'
+import Sidebar from '@/components/partial/Sidebar.vue'
+import Footer from '@/components/partial/Footer.vue'
 export default {
-  components: {
-    'app-navigation': Navigation,
-    'app-sidebar': SideBar,
-    'app-footer': Footer,
-  },
+	transition: {
+		name: 'home',
+		mode: 'out-in',
+		appear:true,
+  	},
+	components: {
+		'app-header': Header,
+		'app-sidebar': Sidebar,
+		'app-footer': Footer,
+	},
 }
 </script>
