@@ -33,23 +33,26 @@ export default {
         '@/assets/css/bootstrap.min.css',
         '@/assets/css/fontawesome-all.min.css',
         '@/assets/css/bootadmin.min.css',
-        '@assets/css/style.css',
     ],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
     plugins: [],
 
+
     // Auto import components: https://go.nuxtjs.dev/config-components
     components: true,
 
     // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-    buildModules: [],
+    buildModules: [
+        '@nuxtjs/vuetify',
+    ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
         'vue-sweetalert2/nuxt',
+        '@nuxtjs/toast',
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -58,6 +61,15 @@ export default {
         baseURL: '/',
     },
 
+
     // Build Configuration: https://go.nuxtjs.dev/config-build
-    build: {},
+    build: {
+        splitChunks: {
+            layouts: true
+        },
+        extend(config, ctx) {
+            // Include the compiler version of Vue so that wp-content works
+            config.resolve.alias["vue$"] = "vue/dist/vue.esm.js"
+        }
+    },
 }

@@ -62,6 +62,7 @@
     </div>
 </template>
 <style>
+
 body{
 	background-image: url('/images/background-login.jpg');
 	background-repeat: no-repeat;
@@ -82,10 +83,13 @@ export default {
             { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' },
             { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap' },
             { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' },
+            { rel: 'stylesheet', href: '/css/style.css' },
         ],
         script: [
             { src: "//cdn.jsdelivr.net/npm/sweetalert2@11" },
         ],
 	},
+
+
 }
 </script>
