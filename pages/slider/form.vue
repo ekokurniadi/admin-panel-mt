@@ -73,6 +73,7 @@ export default {
 			this.previewImage = URL.createObjectURL(this.currentImage)
 			this.progress = 0
 			this.message = ''
+
 		},
 		async upload() {
 			this.progress = 0
@@ -87,7 +88,7 @@ export default {
 			formData.append('active', 1)
 			await this.$axios
 				.post(
-					'http://localhost:8080/api/v1/sliders',
+					`${process.env.API_BASE_URL}/sliders`,
 					formData,
 					config,
 					{

@@ -12,19 +12,16 @@ export default {
             { name: 'format-detection', content: 'telephone=no' },
         ],
         link: [
-            { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-            { rel: 'stylesheet', href: 'https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css' },
+            { rel: 'icon', type: 'image/x-icon', href: '/helmet.ico' },
             { rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.7.2/css/all.css' },
             { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' }
         ],
         script: [
             { src: "//cdn.jsdelivr.net/npm/sweetalert2@11" },
-            { src: "https://code.jquery.com/jquery-3.3.1.min.js" },
             { src: "/js/jquery.min.js" },
             { src: "/js/bootstrap.bundle.min.js" },
             { src: "/js/bootadmin.min.js" },
-            { src: "https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js" },
-            { src: "https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js" }
+
         ],
     },
     loading: { color: 'red' },
@@ -45,6 +42,7 @@ export default {
     // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
     buildModules: [
         '@nuxtjs/vuetify',
+        '@nuxtjs/dotenv',
     ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
@@ -53,12 +51,25 @@ export default {
         '@nuxtjs/axios',
         'vue-sweetalert2/nuxt',
         '@nuxtjs/toast',
+        '@nuxtjs/auth'
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-        baseURL: '/',
+        baseURL: 'http://localhost:8080/api/v1',
+    },
+
+    auth: {
+        strategies: {
+            local: {
+                endpoints: {
+                    login: { url: 'auth/login', method: 'post', propertyName: 'data.jwt_token' },
+                    user: { url: 'users/profile', method: 'get', propertyName: 'data' },
+                    logout: false
+                }
+            }
+        }
     },
 
 

@@ -57,17 +57,19 @@
 							:hide-default-footer="true"
 						>
 							<template v-slot:[`item.image`]="{ item }">
-								<v-img lazy-src="item.image" :src="item.image" class="img-thumbnail img-fluid" style="width:250px" />
+								<v-img :src="item.image" class="img-thumbnail img-fluid" style="width:250px" />
 							</template>
 							<template v-slot:[`item.actions`]="{ item }">
 								<v-icon
 									small
-									class="mr-2"
+									class="mr-2 btn btn-warning btn-sm"
+									style="color:black"
 									@click="editData(item.id)"
 								>
 									mdi-pencil
 								</v-icon>
-								<v-icon small @click="deleteTutorial(item.id)">
+								<v-icon small @click="deleteData(item.id)" class="mr-2 btn btn-danger btn-sm"
+									style="color:white">
 									mdi-delete
 								</v-icon>
 							</template>
@@ -146,7 +148,7 @@ export default {
 		},
 		getAll(params) {
 			return this.$axios.get(
-				'http://localhost:8080/api/v1/sliders_fetch',
+				`${process.env.API_BASE_URL}/sliders_fetch`,
 				{ params }
 			)
 		},
@@ -165,7 +167,7 @@ export default {
 					this.loading = false
 				})
 				.catch((e) => {
-					console.log(e)
+					this.showErr(e)
 				})
 		},
 		handlePageChange(value) {
@@ -183,14 +185,39 @@ export default {
 		editData(id) {
 			this.$router.push('/slider/' + id)
 		},
-		deleteData(id) {},
+		async deleteData(id) {
+			if(confirm("Are you sure to delete this data ?")){
+				await this.$axios.delete(`${process.env.API_BASE_URL}/sliders/${id}`)
+				.then((response)=>{
+					this.showAlert(response)
+					this.retrieveData()
+				}).catch((err)=>{
+					this.showErr(err)
+				})
+			}
+		},
 		getDisplayData(data) {
-
 			return {
 				id: data.id,
-				image: 'http://localhost:8080' + data.image,
+				image: process.env.BASE_URL + data.image,
 				active: data.active,
 			}
+		},
+		showErr(err) {
+			this.$toast.error(err, {
+				duration: 1000,
+				theme: 'toasted-primary',
+				closeOnSwipe: true,
+				position: 'top-right',
+				keepOnHover: true,
+			})
+		},
+		showAlert(data) {
+			this.$swal(
+				data.data.meta.status.toUpperCase(),
+				data.data.meta.message,
+				data.data.meta.code
+			)
 		},
 	},
 	mounted() {

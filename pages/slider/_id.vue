@@ -11,7 +11,7 @@
 					<input
 						type="file"
 						ref="file"
-						@change="selectImage()"
+						@change="selectImage($event)"
 						name="image"
 						id="image"
 					/>
@@ -48,18 +48,14 @@
 						v-model="status"
 					>
 						<option v-bind:value="status">
-							<div v-if="status==1">Active</div>
+							<div v-if="status == 1">Active</div>
 							<div v-else>Non Active</div>
-							</option>
+						</option>
 						<option value="1">Active</option>
-						<option value="0" >Non Active</option>
+						<option value="0">Non Active</option>
 					</select>
 				</div>
-				<button
-					class="btn btn-primary"
-					@click="save()">
-					Submit
-				</button>
+				<button class="btn btn-primary" @click="submit()">Submit</button>
 			</div>
 		</div>
 	</div>
@@ -67,35 +63,92 @@
 <script>
 export default {
 	name: 'detail',
-	data(){
+	data() {
 		return {
-			status :'',
+			status: '',
 			currentImage: undefined,
 			previewImage: undefined,
-			isUploaded :false,
+			isUploaded: false,
 			progress: 0,
 		}
 	},
-	mounted(){
+	mounted() {
 		this.GetData()
 	},
-	methods:{
-		selectImage() {
-			this.currentImage = this.$refs.file.files.item(0)
+	methods: {
+		selectImage(event) {
+			this.currentImage = event.target.files[0]
 			this.previewImage = URL.createObjectURL(this.currentImage)
 			this.progress = 0
 			this.message = ''
-			this.isUploaded=true
+			this.isUploaded = true
+
 		},
-		async GetData(){
-			await this.$axios.get('http://localhost:8080/api/v1/sliders/'+this.$route.params.id)
-			.then((response)=>{
-				console.log(response.data.data)
-				this.currentImage = response.data.data.image
-				this.previewImage = 'http://localhost:8080' + this.currentImage
-				this.status = response.data.data.active
+		async GetData() {
+			await this.$axios
+				.get(
+					`${process.env.API_BASE_URL}/sliders/` +
+						this.$route.params.id
+				)
+				.then((response) => {
+					this.currentImage = response.data.data.image
+					this.previewImage = process.env.BASE_URL + this.currentImage
+					this.status = response.data.data.active
+				})
+				.catch((err) => {
+					this.showErr(err)
+				})
+		},
+		async submit(event) {
+			this.progress = 0
+			const config = {
+				onUploadProgress: (progressEvent) =>
+					(this.progress = Math.round(
+						(100 * progressEvent.loaded) / progressEvent.total
+					)),
+			}
+			let formData = new FormData()
+			if (this.isUploaded==true) {
+				formData.append('image', this.currentImage)
+				formData.append('active', this.status)
+			} else {
+				formData.append('image', this.currentImage.replace('/slider/',''))
+				formData.append('active', this.status)
+			}
+
+			await this.$axios.post(
+				`${process.env.API_BASE_URL}/sliders/` + this.$route.params.id,
+				formData,
+				config,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			).then((response)=>{
+				this.showAlert(response)
+				this.$router.push('/slider')
+			}).catch((err)=>{
+				this.showErr(err)
+				this.progress=0
 			})
-		}
-	}
+		},
+		showAlert(data) {
+			this.$swal(
+				data.data.meta.status.toUpperCase(),
+				data.data.meta.message,
+				data.data.meta.code
+			)
+		},
+		showErr(err) {
+			this.$toast.error(err, {
+				duration: 1000,
+				theme: 'toasted-primary',
+				closeOnSwipe: true,
+				position: 'top-right',
+				keepOnHover: true,
+			})
+		},
+	},
 }
 </script>
