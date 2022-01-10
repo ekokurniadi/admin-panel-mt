@@ -8,10 +8,21 @@
                     <a href="#" id="dd_user" class="nav-link dropdown-toggle" data-toggle="dropdown"><i
                             class="fa fa-user"></i> User </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dd_user">
-                        <a href="/login" class="dropdown-item">Logout</a>
+                        <a href="javascript:void(0)" @click="logout()" class="dropdown-item">Logout</a>
                     </div>
                 </li>
             </ul>
         </div>
     </nav>
 </template>
+<script>
+
+export default {
+	methods:{
+		 async logout(){
+			await this.$auth.logout()
+
+		}
+	}
+}
+</script>

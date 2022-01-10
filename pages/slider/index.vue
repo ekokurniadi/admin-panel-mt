@@ -57,29 +57,40 @@
 							:hide-default-footer="true"
 						>
 							<template v-slot:[`item.image`]="{ item }">
-								<v-img :src="item.image" class="img-thumbnail img-fluid" style="width:250px" />
+								<v-img
+									:src="item.image"
+									class="img-thumbnail img-fluid"
+									style="width: 250px"
+								/>
 							</template>
 							<template v-slot:[`item.actions`]="{ item }">
 								<v-icon
 									small
 									class="mr-2 btn btn-warning btn-sm"
-									style="color:black"
+									style="color: black"
 									@click="editData(item.id)"
 								>
 									mdi-pencil
 								</v-icon>
-								<v-icon small @click="deleteData(item.id)" class="mr-2 btn btn-danger btn-sm"
-									style="color:white">
+								<v-icon
+									small
+									@click="deleteData(item.id)"
+									class="mr-2 btn btn-danger btn-sm"
+									style="color: white"
+								>
 									mdi-delete
 								</v-icon>
 							</template>
 							<template v-slot:[`item.active`]="{ item }">
-
-								<div v-if="item.active==1">
-									<button class="btn btn-success btn-sm"><span class="fa fa-check"></span></button>
+								<div v-if="item.active == 1">
+									<button class="btn btn-success btn-sm">
+										<span class="fa fa-check"></span>
+									</button>
 								</div>
 								<div v-else>
-									<button class="btn btn-danger btn-sm"><span class="fa fa-exclamation"></span></button>
+									<button class="btn btn-danger btn-sm">
+										<span class="fa fa-exclamation"></span>
+									</button>
 								</div>
 							</template>
 						</v-data-table>
@@ -146,10 +157,16 @@ export default {
 			}
 			return params
 		},
-		getAll(params) {
-			return this.$axios.get(
+
+		async getAll(params) {
+			return await this.$axios.get(
 				`${process.env.API_BASE_URL}/sliders_fetch`,
-				{ params }
+				{ params },
+				{
+					headers: {
+						Authorization: `${this.$auth.getToken('local')}`,
+					},
+				}
 			)
 		},
 		retrieveData() {
@@ -186,14 +203,16 @@ export default {
 			this.$router.push('/slider/' + id)
 		},
 		async deleteData(id) {
-			if(confirm("Are you sure to delete this data ?")){
-				await this.$axios.delete(`${process.env.API_BASE_URL}/sliders/${id}`)
-				.then((response)=>{
-					this.showAlert(response)
-					this.retrieveData()
-				}).catch((err)=>{
-					this.showErr(err)
-				})
+			if (confirm('Are you sure to delete this data ?')) {
+				await this.$axios
+					.delete(`${process.env.API_BASE_URL}/sliders/${id}`)
+					.then((response) => {
+						this.showAlert(response)
+						this.retrieveData()
+					})
+					.catch((err) => {
+						this.showErr(err)
+					})
 			}
 		},
 		getDisplayData(data) {
@@ -226,5 +245,7 @@ export default {
 }
 </script>
 <style>
-
+.theme--light.v-pagination .v-pagination__item--active {
+	color: red;
+}
 </style>

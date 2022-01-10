@@ -10,7 +10,8 @@ export default {
 	head(){
 		return {
 			link:[
-				{rel:'stylesheet',href:'/assets/css/style.css'}
+				{rel:'stylesheet',href:'/assets/css/style.css'},
+
 			]
 		}
 	}

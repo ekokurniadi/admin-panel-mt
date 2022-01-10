@@ -21,6 +21,7 @@
 .home-leave-active {
 	opacity: 0;
 }
+
 </style>
 <script>
 import Header from '@/components/partial/Header.vue'

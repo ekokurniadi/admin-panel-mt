@@ -20,7 +20,7 @@
 						<ul class="collapse list-unstyled" id="Konten">
 							<li>
 							<Nuxt-link to="/slider"> - Slider</Nuxt-link>
-							<Nuxt-link to="/user"> - Artikel</Nuxt-link>
+							<Nuxt-link to="/artikel"> - Artikel</Nuxt-link>
 							</li>
 						</ul>
 					</li>

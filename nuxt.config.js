@@ -49,28 +49,53 @@ export default {
     modules: [
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
+        '@nuxtjs/auth',
         'vue-sweetalert2/nuxt',
         '@nuxtjs/toast',
-        '@nuxtjs/auth'
     ],
+
+    router: {
+        middleware: ['auth']
+    },
+
+    auth: {
+        redirect: {
+            login: '/login',
+            home: '/',
+            logout: '/login'
+        },
+        strategies: {
+            local: {
+                token: {
+                    property: "data.token"
+                },
+                endpoints: {
+                    login: {
+                        url: '/api/v1/auth/login',
+                        method: 'post',
+                        propertyName: 'data.token',
+                    },
+                    logout: false,
+                    user: {
+                        url: '/api/v1/auth/users',
+                        method: 'get',
+                        propertyName: 'data',
+                    },
+                },
+                // tokenRequired: true,
+                // tokenType: 'bearer',
+                // globalToken: true,
+                autoFetchUser: true,
+            },
+        },
+    },
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-        baseURL: 'http://localhost:8080/api/v1',
+        baseURL: 'http://localhost:8080',
     },
 
-    auth: {
-        strategies: {
-            local: {
-                endpoints: {
-                    login: { url: 'auth/login', method: 'post', propertyName: 'data.jwt_token' },
-                    user: { url: 'users/profile', method: 'get', propertyName: 'data' },
-                    logout: false
-                }
-            }
-        }
-    },
 
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
