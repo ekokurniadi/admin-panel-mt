@@ -95,9 +95,7 @@
 		</div>
 	</div>
 </template>
-<style>
-
-</style>
+<style></style>
 <script>
 export default {
 	layout: 'login',
@@ -141,14 +139,14 @@ export default {
 				let response = await this.$auth.loginWith('local', {
 					data: this.login,
 				})
-				this.showSuccess(response)
+				this.showSuccess(response.data.meta.message)
 			} catch (err) {
-				this.showErr(err)
+				this.showErr(`${err}, Username atau password tidak valid`)
 			}
 		},
 		showErr(err) {
 			this.$toast.error(err, {
-				duration:1000,
+				duration: 1000,
 				theme: 'toasted-primary',
 				closeOnSwipe: true,
 				position: 'top-right',
@@ -157,7 +155,7 @@ export default {
 		},
 		showSuccess(data) {
 			this.$toast.success(data, {
-				duration:1000,
+				duration: 1000,
 				theme: 'toasted-primary',
 				closeOnSwipe: true,
 				position: 'top-right',
