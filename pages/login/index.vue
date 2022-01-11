@@ -142,7 +142,7 @@ export default {
 					data: this.login,
 				})
 			} catch (err) {
-				showErr(err)
+				this.showErr(err)
 			}
 		},
 		showErr(err) {
