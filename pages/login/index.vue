@@ -142,8 +142,17 @@ export default {
 					data: this.login,
 				})
 			} catch (err) {
-				console.log(err)
+				showErr(err)
 			}
+		},
+		showErr(err) {
+			this.$toast.error(err, {
+				duration:1000,
+				theme: 'toasted-primary',
+				closeOnSwipe: true,
+				position: 'top-right',
+				keepOnHover: true,
+			})
 		},
 	},
 }
