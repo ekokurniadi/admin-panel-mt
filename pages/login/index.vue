@@ -22,7 +22,7 @@
 								class="rounded"
 								name="username"
 								id="username"
-								v-model="login.phone_number"
+								v-model="login.username"
 								placeholder="Username"
 							/>
 						</div>
