@@ -9,7 +9,7 @@
 				<div class="form-group">
 					<label for="image" class="col-md-2">Cover Artikel</label>
 					<div class="col-md-12">
-						<input type="file" ref="file" @change="selectImage()"/>
+						<input type="file" ref="file" @change="selectImage()" />
 					</div>
 					<div class="col-md-12">
 						<div v-if="imagePreview">
@@ -46,7 +46,7 @@
 							v-model="isi"
 						></textarea>
 					</div>
-					<button class="btn btn-primary btn-md" @click="submit()">
+					<button :disabled="!image" class="btn btn-primary btn-md" @click="submit()">
 						<span class="fa fa-save"></span> Save
 					</button>
 					<nuxt-link class="btn btn-danger btn-md" to="/artikel"
@@ -72,22 +72,25 @@ export default {
 			this.image = this.$refs.file.files.item(0)
 			this.imagePreview = URL.createObjectURL(this.image)
 		},
-		async submit(){
+		async submit() {
 			let formData = new FormData()
 			formData.append('image', this.image)
-			formData.append('title',this.judul)
-			formData.append('content',this.isi)
-			const response = await this.$axios.post(`${process.env.API_BASE_URL}/artikel`,formData,{
-				headers: {
-							'Content-Type': 'multipart/form-data',
-							'Authorization':this.$auth.getToken('local')
-						},
-			}).then((res)=>{
-				this.showAlert(res)
-				this.$router.push('/artikel')
-			}).catch((err)=>{
-				this.showErr(err);
-			})
+			formData.append('title', this.judul)
+			formData.append('content', this.isi)
+			const response = await this.$axios
+				.post(`${process.env.API_BASE_URL}/artikel`, formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data',
+						Authorization: this.$auth.getToken('local'),
+					},
+				})
+				.then((res) => {
+					this.showAlert(res)
+					this.$router.push('/artikel')
+				})
+				.catch((err) => {
+					this.showErr(err)
+				})
 		},
 		showAlert(data) {
 			this.$swal(
@@ -98,7 +101,7 @@ export default {
 		},
 		showErr(err) {
 			this.$toast.error(err, {
-				duration:1000,
+				duration: 1000,
 				theme: 'toasted-primary',
 				closeOnSwipe: true,
 				position: 'top-right',

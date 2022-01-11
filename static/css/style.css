@@ -1,3 +1,9 @@
+body {
+    background-image: url('/images/background-login.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .card-header {
     background-color: rgb(43, 101, 226);
 }

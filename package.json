@@ -17,6 +17,8 @@
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/toast": "^3.3.1",
     "core-js": "^3.19.3",
+    "crypto-js": "^4.1.1",
+    "md5": "^2.3.0",
     "nuxt": "^2.15.8",
     "nuxt-tailvue": "^1.0.95",
     "vue": "^2.6.14",

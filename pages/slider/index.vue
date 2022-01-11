@@ -6,6 +6,7 @@
 				<Nuxt-link to="/slider/form" class="btn btn-primary mb-3"
 					><i class="fa fa-plus"></i> Add New</Nuxt-link
 				>
+
 				<div class="row">
 					<div class="col-md-3 offset-8">
 						<input
@@ -96,6 +97,7 @@
 						</v-data-table>
 					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>
