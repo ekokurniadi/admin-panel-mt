@@ -141,12 +141,22 @@ export default {
 				let response = await this.$auth.loginWith('local', {
 					data: this.login,
 				})
+				this.showSuccess(response)
 			} catch (err) {
 				this.showErr(err)
 			}
 		},
 		showErr(err) {
 			this.$toast.error(err, {
+				duration:1000,
+				theme: 'toasted-primary',
+				closeOnSwipe: true,
+				position: 'top-right',
+				keepOnHover: true,
+			})
+		},
+		showSuccess(data) {
+			this.$toast.success(data, {
 				duration:1000,
 				theme: 'toasted-primary',
 				closeOnSwipe: true,

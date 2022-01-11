@@ -1,18 +1,4 @@
 export default {
-    /*
-     ** Nuxt rendering mode
-     ** See https://nuxtjs.org/api/configuration-mode
-     */
-    mode: 'spa',
-    /*
-     ** Nuxt target
-     ** See https://nuxtjs.org/api/configuration-target
-     */
-    target: 'static',
-    /*
-     ** Headers of the page
-     ** See https://nuxtjs.org/api/configuration-head
-     */
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
         title: 'Panel Market Tukang',
