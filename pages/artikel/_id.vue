@@ -67,6 +67,9 @@
 				</div>
 			</div>
 		</div>
+		<v-overlay :value="overlay">
+			<v-progress-circular indeterminate size="64"></v-progress-circular>
+		</v-overlay>
 	</div>
 </template>
 <script>
@@ -78,6 +81,7 @@ export default {
 			imagePreview: undefined,
 			isi: '',
 			isUploaded: false,
+			overlay:false,
 		}
 	},
 	mounted() {
@@ -90,6 +94,7 @@ export default {
 			this.isUploaded = true
 		},
 		async GetData() {
+			this.overlay=true
 			await this.$axios
 				.get(
 					`${process.env.API_BASE_URL}/artikel/` +
@@ -101,16 +106,19 @@ export default {
 					}
 				)
 				.then((response) => {
+					this.overlay=false
 					this.image = response.data.data.image
 					this.imagePreview = process.env.BASE_URL + this.image
 					this.judul = response.data.data.title
-					this.isi = this.truncate(response.data.data.content, 50)
+					this.isi = response.data.data.content
 				})
 				.catch((err) => {
+					this.overlay=false
 					this.showErr(err)
 				})
 		},
 		async submit() {
+			this.overlay=true
 			let formData = new FormData()
 			if (this.isUploaded == true) {
 				formData.append('image', this.image)
@@ -121,7 +129,7 @@ export default {
 				formData.append('title', this.judul)
 				formData.append('content', this.isi)
 			}
-			console.log(formData)
+
 			const response = await this.$axios
 				.post(
 					`${process.env.API_BASE_URL}/artikel/${this.$route.params.id}`,
@@ -134,10 +142,12 @@ export default {
 					}
 				)
 				.then((res) => {
+					this.overlay=false
 					this.showAlert(res)
 					this.$router.push('/artikel')
 				})
 				.catch((err) => {
+					this.overlay=false
 					this.showErr(err)
 				})
 		},

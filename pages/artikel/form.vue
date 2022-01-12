@@ -46,7 +46,11 @@
 							v-model="isi"
 						></textarea>
 					</div>
-					<button :disabled="!image" class="btn btn-primary btn-md" @click="submit()">
+					<button
+						:disabled="!image"
+						class="btn btn-primary btn-md"
+						@click="submit()"
+					>
 						<span class="fa fa-save"></span> Save
 					</button>
 					<nuxt-link class="btn btn-danger btn-md" to="/artikel"
@@ -55,6 +59,9 @@
 				</div>
 			</div>
 		</div>
+		<v-overlay :value="overlay">
+			<v-progress-circular indeterminate size="64"></v-progress-circular>
+		</v-overlay>
 	</div>
 </template>
 <script>
@@ -65,6 +72,7 @@ export default {
 			image: undefined,
 			imagePreview: undefined,
 			isi: '',
+			overlay:false,
 		}
 	},
 	methods: {
@@ -73,6 +81,7 @@ export default {
 			this.imagePreview = URL.createObjectURL(this.image)
 		},
 		async submit() {
+			this.overlay = true
 			let formData = new FormData()
 			formData.append('image', this.image)
 			formData.append('title', this.judul)
@@ -85,10 +94,12 @@ export default {
 					},
 				})
 				.then((res) => {
+					this.overlay=false
 					this.showAlert(res)
 					this.$router.push('/artikel')
 				})
 				.catch((err) => {
+					this.overlay=false
 					this.showErr(err)
 				})
 		},

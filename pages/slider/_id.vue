@@ -47,7 +47,7 @@
 						class="form-control"
 						v-model="status"
 					>
-						<option v-bind:value="status">
+						<option v-bind:value="status" selected>
 							<div v-if="status == 1">Active</div>
 							<div v-else>Non Active</div>
 						</option>
