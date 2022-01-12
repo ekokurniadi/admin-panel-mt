@@ -96,6 +96,9 @@
 				</div>
 			</div>
 		</div>
+		<v-overlay :value="overlay">
+			<v-progress-circular indeterminate size="64"></v-progress-circular>
+		</v-overlay>
 	</div>
 </template>
 
@@ -106,6 +109,7 @@ export default {
 		return {
 			sliders: [],
 			searchTitle: '',
+			overlay:false,
 			headers: [
 				{
 					text: 'Cover',
@@ -186,6 +190,7 @@ export default {
 			)
 		},
 		retrieveData() {
+			this.overlay=true
 			const params = this.getRequestParams(
 				this.searchTitle,
 				this.page,
@@ -194,6 +199,7 @@ export default {
 			this.getAll(params)
 				.then((response) => {
 					this.loading = true
+					this.overlay=false
 					const { data, totalPages } = response.data
 					this.sliders = data.map(this.getDisplayData)
 					this.totalPages = totalPages
@@ -222,6 +228,7 @@ export default {
 			this.$router.push(`/artikel/${id}?mode=${data}`)
 		},
 		async deleteData(id) {
+			this.overlay=true
 			if (confirm('Are you sure to delete this data ?')) {
 				await this.$axios.delete(`${process.env.API_BASE_URL}/artikel/${id}`,{
 						headers: {
@@ -229,10 +236,12 @@ export default {
 						},
 					} )
 					.then((response) => {
+						this.overlay=false
 						this.showAlert(response)
 						this.retrieveData()
 					})
 					.catch((err) => {
+						this.overlay=false
 						this.showErr(err)
 					})
 			}
