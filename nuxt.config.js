@@ -1,4 +1,8 @@
 export default {
+    mode: 'universal',
+    /*
+     ** Headers of the page
+     */
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
         title: 'Panel Market Tukang',
@@ -34,7 +38,8 @@ export default {
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
     plugins: [
-        '~/plugins/crypto.js'
+        '~/plugins/crypto.js',
+        '~/plugins/random.js'
     ],
 
 
@@ -52,9 +57,35 @@ export default {
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
         '@nuxtjs/auth',
+        'nuxt-uid-module',
         'vue-sweetalert2/nuxt',
         '@nuxtjs/toast',
+        '@nuxtjs/pwa', ['@nuxtjs/firebase',
+            {
+                config: {
+                    apiKey: "AIzaSyB0gvg_pkm98XxGtY16W9dBlD8RgN98x2I",
+                    authDomain: "markettukang-4459b.firebaseapp.com",
+                    projectId: "markettukang-4459b",
+                    storageBucket: "markettukang-4459b.appspot.com",
+                    messagingSenderId: "442534122988",
+                    appId: "1:442534122988:web:ae35472d19b4d87f68dcc9",
+                    measurementId: "G-E1HTL401YC"
+                },
+                services: {
+                    auth: true,
+                    firestore: true,
+                    functions: true,
+                    storage: true,
+                    database: true,
+                    messaging: true,
+                    performance: true,
+                    analytics: true,
+                    remoteConfig: true
+                }
+            }
+        ]
     ],
+
 
     router: {
         middleware: ['auth']
@@ -84,9 +115,6 @@ export default {
                         propertyName: 'data',
                     },
                 },
-                // tokenRequired: true,
-                // tokenType: 'bearer',
-                // globalToken: true,
                 autoFetchUser: true,
             },
         },

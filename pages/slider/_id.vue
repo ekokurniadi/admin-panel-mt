@@ -10,8 +10,8 @@
 				<div class="col-md-10">
 					<input
 						type="file"
-						ref="file"
-						@change="selectImage($event)"
+						accept="image/*"
+						@change="selectImage"
 						name="image"
 						id="image"
 					/>
@@ -55,36 +55,55 @@
 						<option value="0">Non Active</option>
 					</select>
 				</div>
-				<button class="btn btn-primary" @click="submit()">Submit</button>
+				<button class="btn btn-primary" @click="submit()">
+					Submit
+				</button>
 			</div>
 		</div>
+		<v-overlay :value="this.loading">
+			<v-progress-circular indeterminate size="64"></v-progress-circular>
+		</v-overlay>
 	</div>
 </template>
 <script>
+import imageCompressor from 'vue-image-compressor'
+
 export default {
 	name: 'detail',
+	components: { imageCompressor },
 	data() {
 		return {
 			status: '',
 			currentImage: undefined,
 			previewImage: undefined,
 			isUploaded: false,
+			loading:false,
 			progress: 0,
+			forms: {
+				image: '',
+				active: 0,
+			},
+			pictureDataBase: '',
+			UUID: '',
+			imageBefore: '',
 		}
 	},
 	mounted() {
 		this.GetData()
 	},
 	methods: {
+
 		selectImage(event) {
+
 			this.currentImage = event.target.files[0]
+			this.UUID =this.currentImage.name.split('.')[1]
 			this.previewImage = URL.createObjectURL(this.currentImage)
 			this.progress = 0
 			this.message = ''
 			this.isUploaded = true
-
 		},
 		async GetData() {
+			this.loading=true;
 			await this.$axios
 				.get(
 					`${process.env.API_BASE_URL}/sliders/` +
@@ -92,46 +111,72 @@ export default {
 				)
 				.then((response) => {
 					this.currentImage = response.data.data.image
-					this.previewImage = process.env.BASE_URL + this.currentImage
+					this.imageBefore = response.data.data.image
+					this.previewImage = this.currentImage
 					this.status = response.data.data.active
+					this.loading=false;
 				})
 				.catch((err) => {
 					this.showErr(err)
 				})
 		},
-		async submit(event) {
-			this.progress = 0
-			const config = {
-				onUploadProgress: (progressEvent) =>
-					(this.progress = Math.round(
-						(100 * progressEvent.loaded) / progressEvent.total
-					)),
-			}
-			let formData = new FormData()
-			if (this.isUploaded==true) {
-				formData.append('image', this.currentImage)
-				formData.append('active', this.status)
-			} else {
-				formData.append('image', this.currentImage.replace('/slider/',''))
-				formData.append('active', this.status)
-			}
+		async submit() {
+			this.loading=true;
+			this.deleteImage()
+			const storage = this.$fireModule.storage()
+			const imageRef = storage.ref(
+				`slider/${this.$uniqueID(25) + '.' + this.UUID}`
+			)
 
-			await this.$axios.post(
-				`${process.env.API_BASE_URL}/sliders/` + this.$route.params.id,
-				formData,
-				config,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			).then((response)=>{
-				this.showAlert(response)
-				this.$router.push('/slider')
-			}).catch((err)=>{
-				this.showErr(err)
-				this.progress=0
+			const uploadTask = imageRef
+				.put(this.currentImage)
+				.then((snapshot) => {
+					this.progress =
+						(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+					return snapshot.ref.getDownloadURL().then((url) => {
+						return url
+					})
+				})
+				.catch((error) => {
+					console.error('Error on uploading image', error)
+				})
+			await uploadTask.then((url) => {
+				this.pictureDataBase = url
 			})
+			this.forms.image = this.pictureDataBase
+			this.forms.active = this.status
+
+			await this.$axios
+				.post(
+					`${process.env.API_BASE_URL}/sliders/` +
+						this.$route.params.id,
+					this.forms,
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							Authorization: this.$auth.getToken('local'),
+						},
+					}
+				)
+				.then((response) => {
+					this.loading=false;
+					this.showAlert(response)
+					this.$router.push('/slider')
+				})
+				.catch((err) => {
+					this.showErr(err)
+					this.progress = 0
+				})
+		},
+		async deleteImage() {
+			await this.$fireModule
+				.storage()
+				.refFromURL(this.imageBefore)
+				.delete()
+				.then(() => {})
+				.catch((err) => {
+					this.showErr(err)
+				})
 		},
 		showAlert(data) {
 			this.$swal(

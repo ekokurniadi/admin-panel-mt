@@ -97,9 +97,11 @@
 						</v-data-table>
 					</div>
 				</div>
-
 			</div>
 		</div>
+		<v-overlay :value="this.loading">
+			<v-progress-circular indeterminate size="64"></v-progress-circular>
+		</v-overlay>
 	</div>
 </template>
 
@@ -220,7 +222,7 @@ export default {
 		getDisplayData(data) {
 			return {
 				id: data.id,
-				image: process.env.BASE_URL + data.image,
+				image: data.image,
 				active: data.active,
 			}
 		},
