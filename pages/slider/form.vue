@@ -85,7 +85,7 @@ export default {
 		async upload() {
 			this.loading=true;
 			const storage = this.$fireModule.storage()
-			const imageRef = storage.ref(`slider/${Math.round(new Date() / 1000)+'.'+this.UUID}`)
+			const imageRef = storage.ref(`slider/${this.$uniqueID(25) + '.' + this.UUID}`)
 
 			const uploadTask = imageRef
 				.put(this.currentImage)
