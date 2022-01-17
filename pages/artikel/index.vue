@@ -34,7 +34,6 @@
 							:items="pageSizes"
 							v-model="pageSize"
 							label="Items per Page"
-
 							@change="handlePageSizeChange"
 						></v-select>
 					</div>
@@ -109,7 +108,7 @@ export default {
 		return {
 			sliders: [],
 			searchTitle: '',
-			overlay:false,
+			overlay: false,
 			headers: [
 				{
 					text: 'Cover',
@@ -190,7 +189,7 @@ export default {
 			)
 		},
 		retrieveData() {
-			this.overlay=true
+			this.overlay = true
 			const params = this.getRequestParams(
 				this.searchTitle,
 				this.page,
@@ -199,7 +198,7 @@ export default {
 			this.getAll(params)
 				.then((response) => {
 					this.loading = true
-					this.overlay=false
+					this.overlay = false
 					const { data, totalPages } = response.data
 					this.sliders = data.map(this.getDisplayData)
 					this.totalPages = totalPages
@@ -228,28 +227,51 @@ export default {
 			this.$router.push(`/artikel/${id}?mode=${data}`)
 		},
 		async deleteData(id) {
-			this.overlay=true
+			this.overlay = true
 			if (confirm('Are you sure to delete this data ?')) {
-				await this.$axios.delete(`${process.env.API_BASE_URL}/artikel/${id}`,{
+				await this.$axios
+					.get(`${process.env.API_BASE_URL}/artikel/${id}`, {
 						headers: {
 							Authorization: `${this.$auth.getToken('local')}`,
 						},
-					} )
-					.then((response) => {
-						this.overlay=false
-						this.showAlert(response)
-						this.retrieveData()
 					})
-					.catch((err) => {
-						this.overlay=false
-						this.showErr(err)
+					.then((res) => {
+						this.deleteImage(res.data.data)
+					})
+					.catch((error) => {
+						this.showErr(error)
 					})
 			}
+		},
+		async deleteImage(data) {
+			await this.$axios
+				.delete(`${process.env.API_BASE_URL}/artikel/${data.id}`, {
+					headers: {
+						Authorization: `${this.$auth.getToken('local')}`,
+					},
+				})
+				.then((response) => {
+					this.overlay = false
+					this.showAlert(response)
+					this.retrieveData()
+				})
+				.catch((err) => {
+					this.overlay = false
+					this.showErr(err)
+				})
+			await this.$fireModule
+				.storage()
+				.refFromURL(data.image)
+				.delete()
+				.then(() => {})
+				.catch((err) => {
+					this.showErr(err)
+				})
 		},
 		getDisplayData(data) {
 			return {
 				id: data.id,
-				image: process.env.BASE_URL + data.image,
+				image: data.image,
 				title: data.title,
 				content: this.truncate(data.content, 25),
 				viewsCount: data.views_count,

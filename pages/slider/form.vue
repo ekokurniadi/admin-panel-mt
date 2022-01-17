@@ -113,7 +113,7 @@ export default {
 			}
 
 			this.forms.image = this.pictureDataBase
-			this.forms.active = 1
+			this.forms.active = "1"
 
 				await this.$axios
 					.post(

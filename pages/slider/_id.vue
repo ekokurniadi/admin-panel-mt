@@ -73,7 +73,7 @@ export default {
 	components: { imageCompressor },
 	data() {
 		return {
-			status: '',
+			status: 0,
 			currentImage: undefined,
 			previewImage: undefined,
 			isUploaded: false,
@@ -94,7 +94,6 @@ export default {
 	methods: {
 
 		selectImage(event) {
-
 			this.currentImage = event.target.files[0]
 			this.UUID =this.currentImage.name.split('.')[1]
 			this.previewImage = URL.createObjectURL(this.currentImage)
@@ -113,7 +112,7 @@ export default {
 					this.currentImage = response.data.data.image
 					this.imageBefore = response.data.data.image
 					this.previewImage = this.currentImage
-					this.status = response.data.data.active
+					this.status = response.data.data.active.toString()
 					this.loading=false;
 				})
 				.catch((err) => {
@@ -122,51 +121,78 @@ export default {
 		},
 		async submit() {
 			this.loading=true;
-			this.deleteImage()
-			const storage = this.$fireModule.storage()
-			const imageRef = storage.ref(
-				`slider/${this.$uniqueID(25) + '.' + this.UUID}`
-			)
-
-			const uploadTask = imageRef
-				.put(this.currentImage)
-				.then((snapshot) => {
-					this.progress =
-						(snapshot.bytesTransferred / snapshot.totalBytes) * 100
-					return snapshot.ref.getDownloadURL().then((url) => {
-						return url
-					})
-				})
-				.catch((error) => {
-					console.error('Error on uploading image', error)
-				})
-			await uploadTask.then((url) => {
-				this.pictureDataBase = url
-			})
-			this.forms.image = this.pictureDataBase
-			this.forms.active = this.status
-
-			await this.$axios
-				.post(
-					`${process.env.API_BASE_URL}/sliders/` +
-						this.$route.params.id,
-					this.forms,
-					{
-						headers: {
-							'Content-Type': 'application/json',
-							Authorization: this.$auth.getToken('local'),
-						},
-					}
+			if(this.isUploaded){
+				this.deleteImage()
+				const storage = this.$fireModule.storage()
+				const imageRef = storage.ref(
+					`slider/${this.$uniqueID(25) + '.' + this.UUID}`
 				)
-				.then((response) => {
-					this.loading=false;
-					this.showAlert(response)
-					this.$router.push('/slider')
+				const uploadTask = imageRef
+					.put(this.currentImage)
+					.then((snapshot) => {
+						this.progress =
+							(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+						return snapshot.ref.getDownloadURL().then((url) => {
+							return url
+						})
+					})
+					.catch((error) => {
+						console.error('Error on uploading image', error)
+					})
+				await uploadTask.then((url) => {
+					this.pictureDataBase = url
 				})
-				.catch((err) => {
-					this.showErr(err)
-					this.progress = 0
-				})
+				this.forms.image = this.pictureDataBase
+				this.forms.active = this.status
+
+				await this.$axios
+					.post(
+						`${process.env.API_BASE_URL}/sliders/` +
+							this.$route.params.id,
+						this.forms,
+						{
+							headers: {
+								'Content-Type': 'application/json',
+								Authorization: this.$auth.getToken('local'),
+							},
+						}
+					)
+					.then((response) => {
+						this.loading=false;
+						this.showAlert(response)
+						this.$router.push('/slider')
+					})
+					.catch((err) => {
+						this.showErr(err)
+						this.progress = 0
+					})
+			}else{
+				this.forms.image = this.currentImage
+				this.forms.active = this.status
+
+				await this.$axios
+					.post(
+						`${process.env.API_BASE_URL}/sliders/` +
+							this.$route.params.id,
+						this.forms,
+						{
+							headers: {
+								'Content-Type': 'application/json',
+								Authorization: this.$auth.getToken('local'),
+							},
+						}
+					)
+					.then((response) => {
+						this.loading=false;
+						this.showAlert(response)
+						this.$router.push('/slider')
+					})
+					.catch((err) => {
+						this.showErr(err)
+						this.progress = 0
+					})
+
+			}
 		},
 		async deleteImage() {
 			await this.$fireModule

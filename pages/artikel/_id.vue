@@ -108,7 +108,7 @@ export default {
 				.then((response) => {
 					this.overlay=false
 					this.image = response.data.data.image
-					this.imagePreview = process.env.BASE_URL + this.image
+					this.imagePreview = this.image
 					this.judul = response.data.data.title
 					this.isi = response.data.data.content
 				})

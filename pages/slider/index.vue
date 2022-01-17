@@ -209,15 +209,37 @@ export default {
 		async deleteData(id) {
 			if (confirm('Are you sure to delete this data ?')) {
 				await this.$axios
-					.delete(`${process.env.API_BASE_URL}/sliders/${id}`)
-					.then((response) => {
-						this.showAlert(response)
-						this.retrieveData()
+					.get(`${process.env.API_BASE_URL}/sliders/${id}`, {
+						headers: {
+							Authorization: `${this.$auth.getToken('local')}`,
+						},
 					})
-					.catch((err) => {
-						this.showErr(err)
+					.then((res) => {
+						this.deleteImage(res.data.data)
+					})
+					.catch((error) => {
+						this.showErr(error)
 					})
 			}
+		},
+		async deleteImage(data) {
+			await this.$axios
+				.delete(`${process.env.API_BASE_URL}/sliders/${id}`)
+				.then((response) => {
+					this.showAlert(response)
+					this.retrieveData()
+				})
+				.catch((err) => {
+					this.showErr(err)
+				})
+			await this.$fireModule
+				.storage()
+				.refFromURL(data.image)
+				.delete()
+				.then(() => {})
+				.catch((err) => {
+					this.showErr(err)
+				})
 		},
 		getDisplayData(data) {
 			return {

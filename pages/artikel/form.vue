@@ -9,7 +9,7 @@
 				<div class="form-group">
 					<label for="image" class="col-md-2">Cover Artikel</label>
 					<div class="col-md-12">
-						<input type="file" ref="file" @change="selectImage()" />
+						<input type="file" ref="file" @change="selectImage" />
 					</div>
 					<div class="col-md-12">
 						<div v-if="imagePreview">
@@ -65,41 +65,73 @@
 	</div>
 </template>
 <script>
+import Editor from '@tinymce/tinymce-vue'
 export default {
+	components: {
+		editor: Editor,
+	},
 	data() {
 		return {
 			judul: '',
 			image: undefined,
-			imagePreview: undefined,
 			isi: '',
-			overlay:false,
+			imagePreview: undefined,
+			overlay: false,
+			UUID: '',
+			pictureDataBase: '',
+			forms: {
+				title: '',
+				image: '',
+				content: '',
+			},
 		}
 	},
 	methods: {
-		selectImage() {
-			this.image = this.$refs.file.files.item(0)
+		selectImage(event) {
+			this.image = event.target.files[0]
+			this.UUID = this.image.name.split('.')[1]
 			this.imagePreview = URL.createObjectURL(this.image)
 		},
 		async submit() {
 			this.overlay = true
-			let formData = new FormData()
-			formData.append('image', this.image)
-			formData.append('title', this.judul)
-			formData.append('content', this.isi)
+			const storage = this.$fireModule.storage()
+			const imageRef = storage.ref(
+				`artikel/${this.$uniqueID(25) + '.' + this.UUID}`
+			)
+
+			const uploadTask = imageRef
+				.put(this.image)
+				.then((snapshot) => {
+					this.progress =
+						(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+					return snapshot.ref.getDownloadURL().then((url) => {
+						return url
+					})
+				})
+				.catch((error) => {
+					console.error('Error on uploading image', error)
+				})
+			await uploadTask.then((url) => {
+				this.pictureDataBase = url
+				this.overlay = true
+			})
+			this.forms.image = this.pictureDataBase
+			this.forms.title = this.judul
+			this.forms.content = this.isi
 			const response = await this.$axios
-				.post(`${process.env.API_BASE_URL}/artikel`, formData, {
+				.post(`${process.env.API_BASE_URL}/artikel`, this.forms, {
 					headers: {
-						'Content-Type': 'multipart/form-data',
+						'Content-Type': 'application/json',
 						Authorization: this.$auth.getToken('local'),
 					},
 				})
 				.then((res) => {
-					this.overlay=false
+					this.overlay = false
 					this.showAlert(res)
 					this.$router.push('/artikel')
 				})
 				.catch((err) => {
-					this.overlay=false
+					this.overlay = false
 					this.showErr(err)
 				})
 		},
