@@ -224,7 +224,7 @@ export default {
 		},
 		async deleteImage(data) {
 			await this.$axios
-				.delete(`${process.env.API_BASE_URL}/sliders/${id}`)
+				.delete(`${process.env.API_BASE_URL}/sliders/${data.id}`)
 				.then((response) => {
 					this.showAlert(response)
 					this.retrieveData()
