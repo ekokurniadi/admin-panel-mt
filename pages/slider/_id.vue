@@ -73,7 +73,7 @@ export default {
 	components: { imageCompressor },
 	data() {
 		return {
-			status: 0,
+			status: '',
 			currentImage: undefined,
 			previewImage: undefined,
 			isUploaded: false,
@@ -81,7 +81,7 @@ export default {
 			progress: 0,
 			forms: {
 				image: '',
-				active: 0,
+				active: '',
 			},
 			pictureDataBase: '',
 			UUID: '',
