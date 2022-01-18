@@ -69,7 +69,7 @@ export default {
 			imageInfos: [],
 			forms: {
 				image: '',
-				active: 0,
+				active: '',
 			},
 		}
 	},
